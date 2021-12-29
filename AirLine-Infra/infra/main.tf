@@ -5,14 +5,14 @@ provider "azurerm" {
 }
 
 module "rg" {
-  source   = "/resource_group"
+  source   = "resource_group"
   rsg_name  = var.resource_group_name
   rsg_location = var.resource_group_location
   tags = var.tags
 }
 
 module "network" {
-  source              = "/vnet"
+  source              = "vnet"
   resource_group_name = module.rg.rsg_name
   location            = module.rg.rsg_location
   vnet_name           = "test-vnet"
@@ -21,7 +21,7 @@ module "network" {
 }
 
 module "virtual_machine" {
-  source              = "/virtual_machine"
+  source              = "virtual_machine"
   resource_group_name = module.rg.rsg_name
   location            = module.rg.rsg_location
   vm_list             = var.vm_list
