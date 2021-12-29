@@ -1,6 +1,6 @@
 resource_group_name = "Airlines-rsg"
 
-resource_group_location = "centralus"
+resource_group_location = "eastus"
 
 tags = {
     project="Airline"
