@@ -1,4 +1,4 @@
-resource_group_name = "Airlines-shared-rsg"
+resource_group_name = "Airlines-rsg"
 
 resource_group_location = "centralus"
 
