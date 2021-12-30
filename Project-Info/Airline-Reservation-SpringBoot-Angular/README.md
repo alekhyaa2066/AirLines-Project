@@ -1,4 +1,4 @@
-# Airline-Reservation-SpringBoot-Angular
+# Airline-Reservation-SpringBoot-Angular Project
 
 ## PROJECT - AIRLINES	(a SpringBoot-Angular Application) <br/> 
   Developed by Anchal Maheshwari (https://github.com/manchal395), Gautam, Gurdeep, Animesh <br/>
