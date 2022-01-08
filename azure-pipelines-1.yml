@@ -19,14 +19,19 @@ steps:
 - script: mvn package
   displayName: 'mvn package'
   workingDirectory: $(pomDir)
-# - task: CopyFiles@2
-#   inputs:
-#     SourceFolder: '$(pomDir)'
-#     Contents: '**/*.jar'
-#     TargetFolder: '$(build.artifactstagingdirectory)'
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(pomDir)'
+    Contents: '**/*.jar'
+    TargetFolder: '$(build.artifactstagingdirectory)'
 
-- script: mvn publish -o $(build.artifactstagingdirectory)
-  displayName: publish artifacts
-  workingDirectory: $(pomDir)
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(build.artifactstagingdirectory)'
+    artifact: 'drop'
+    publishLocation: 'pipeline'
+    
+
+
 
 
