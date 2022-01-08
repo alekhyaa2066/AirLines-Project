@@ -1,0 +1,17 @@
+
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: pwd
+  displayName: 'check dir'
+- script: ls -la
+  displayName: 'check files'
+
+- script: mvn package
+  displayName: 'mvn package'
+
