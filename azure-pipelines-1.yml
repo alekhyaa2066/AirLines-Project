@@ -9,29 +9,40 @@ variables:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-# - script: pwd
-#   displayName: 'check dir'
+stages:
+- stage: build
+  jobs:
+    - job: build
+      steps:
+      # - script: pwd
+      #   displayName: 'check dir'
 
-# - script: ls -la
-#   displayName: 'check files'
+      # - script: ls -la
+      #   displayName: 'check files'
 
-- script: mvn package
-  displayName: 'mvn package'
-  workingDirectory: $(pomDir)
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: '$(pomDir)'
-    Contents: '**/*.jar'
-    TargetFolder: '$(build.artifactstagingdirectory)'
+      - script: mvn package
+        displayName: 'mvn package'
+        workingDirectory: $(pomDir)
+      - task: CopyFiles@2
+        inputs:
+          SourceFolder: '$(pomDir)'
+          Contents: '**/*.jar'
+          TargetFolder: '$(build.artifactstagingdirectory)'
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(build.artifactstagingdirectory)'
+          artifact: 'drop'
+          publishLocation: 'pipeline'
 
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(build.artifactstagingdirectory)'
-    artifact: 'drop'
-    publishLocation: 'pipeline'
-    
+- stage: deploy_to_test_env
+  jobs:
+  - job: 'deployToAppservice'
+    displayName: 'deploy to test env slot'
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'drop'
+        targetPath: '$(Pipeline.Workspace)/drop'
 
-
-
-
+ 
