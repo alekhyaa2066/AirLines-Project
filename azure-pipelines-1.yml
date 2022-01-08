@@ -3,6 +3,9 @@
 trigger:
 - master
 
+variables:
+  pomDir: 'Backend/project-gladiator/gladiator'
+
 pool:
   vmImage: ubuntu-latest
 
@@ -14,4 +17,5 @@ steps:
 
 - script: mvn package
   displayName: 'mvn package'
+  workingDirectory: $(pomDir)
 
