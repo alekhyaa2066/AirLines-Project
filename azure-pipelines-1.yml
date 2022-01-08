@@ -10,12 +10,19 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: pwd
-  displayName: 'check dir'
-- script: ls -la
-  displayName: 'check files'
+# - script: pwd
+#   displayName: 'check dir'
+
+# - script: ls -la
+#   displayName: 'check files'
 
 - script: mvn package
   displayName: 'mvn package'
   workingDirectory: $(pomDir)
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(pomDir)'
+    Contents: '**/*.jar'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+
 
