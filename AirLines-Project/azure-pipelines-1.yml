@@ -1,0 +1,70 @@
+
+
+trigger:
+- master
+
+variables:
+  pomDir: 'Backend/project-gladiator/gladiator'
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: build
+  jobs:
+    - job: build
+      steps:
+      
+
+      - script: mvn package
+        displayName: 'mvn package'
+        workingDirectory: $(pomDir)
+      - task: CopyFiles@2
+        inputs:
+          SourceFolder: '$(pomDir)'
+          Contents: '**/*.jar'
+          TargetFolder: '$(build.artifactstagingdirectory)'
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(build.artifactstagingdirectory)'
+          artifact: 'drop'
+          publishLocation: 'pipeline'
+
+- stage: Manual_Approval
+  pool: server
+  jobs:
+  - job: 'Approve_for_NextStage'
+    displayName: 'Validate to approve for NextStage'
+    timeoutInMinutes: 4320
+    steps:
+    - task: ManualValidation@0
+      timeoutInMinutes: 4320
+      inputs:
+        notifyUsers: 'Alekhya.Thadagonda@lntinfotech.com'
+        instructions: 'Validate for next stage'
+        onTimeout: reject
+
+- stage: deploy_to_test_env
+  jobs:
+  - job: 'deployToAppservice'
+    displayName: 'deploy to test env slot'
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'drop'
+        targetPath: '$(Pipeline.Workspace)/drop'
+    - task: AzureWebApp@1
+      inputs:
+        azureSubscription: 'Free Trial-Airline-Project (94a17abb-3b06-4775-b208-c36b78db5987)'
+        appType: 'webApp'
+        appName: 'practice-app1'
+        deployToSlotOrASE: true
+        resourceGroupName: 'Practice'
+        slotName: 'testing-env'
+        #package: '$(Pipeline.Workspace)/drop/target/*.jar'
+        package: '$(Pipeline.Workspace)/**/*.jar'
+        deploymentMethod: 'auto'
+
+
+ 
