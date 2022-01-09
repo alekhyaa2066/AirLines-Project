@@ -49,6 +49,6 @@ stages:
         resourceGroupName: 'Practice'
         slotName: 'testing-env'
         #package: '$(Pipeline.Workspace)/drop/target/*.jar'
-        package: '$(Pipeline.Workspace)/*.zip'
+        package: '$(Pipeline.Workspace)/**/*.jar'
         deploymentMethod: 'auto'
  
