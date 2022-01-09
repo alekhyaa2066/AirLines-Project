@@ -20,12 +20,26 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'init'
-          workingDirectory: 'AirLines-Project/AirLine-Infra'
+          workingDirectory: $(terraformDir)
           backendServiceArm: 'Free Trial-Airline-Project (94a17abb-3b06-4775-b208-c36b78db5987)'
           backendAzureRmResourceGroupName: 'SA-rsg'
           backendAzureRmStorageAccountName: 'tffilessa'
           backendAzureRmContainerName: 'terraform'
           backendAzureRmKey: 'terraform/terraform.tfstate'
+      
+      - task: TerraformTaskV2@2
+        inputs:
+          provider: 'azurerm'
+          command: 'plan'
+          workingDirectory: $(terraformDir)
+          environmentServiceNameAzureRM: 'Free Trial-Airline-Project (94a17abb-3b06-4775-b208-c36b78db5987)'
+      - task: TerraformTaskV2@2
+        inputs:
+          provider: 'azurerm'
+          command: 'apply'
+          workingDirectory: $(terraformDir)
+          environmentServiceNameAzureRM: 'Free Trial-Airline-Project (94a17abb-3b06-4775-b208-c36b78db5987)'
+
     - job: build
       steps:
       - script: mvn package
@@ -56,27 +70,27 @@ stages:
         instructions: 'Validate for next stage'
         onTimeout: reject
 
-- stage: deploy_to_test_env
-  jobs:
-  - job: 'deployToAppservice'
-    displayName: 'deploy to test env slot'
-    steps:
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'drop'
-        targetPath: '$(Pipeline.Workspace)/drop'
-    - task: AzureWebApp@1
-      inputs:
-        azureSubscription: 'Free Trial-Airline-Project (94a17abb-3b06-4775-b208-c36b78db5987)'
-        appType: 'webApp'
-        appName: 'practice-app1'
-        deployToSlotOrASE: true
-        resourceGroupName: 'Practice'
-        slotName: 'testing-env'
-        #package: '$(Pipeline.Workspace)/drop/target/*.jar'
-        package: '$(Pipeline.Workspace)/**/*.jar'
-        deploymentMethod: 'auto'
+# - stage: deploy_to_test_env
+#   jobs:
+#   - job: 'deployToAppservice'
+#     displayName: 'deploy to test env slot'
+#     steps:
+#     - task: DownloadPipelineArtifact@2
+#       inputs:
+#         buildType: 'current'
+#         artifactName: 'drop'
+#         targetPath: '$(Pipeline.Workspace)/drop'
+#     - task: AzureWebApp@1
+#       inputs:
+#         azureSubscription: 'Free Trial-Airline-Project (94a17abb-3b06-4775-b208-c36b78db5987)'
+#         appType: 'webApp'
+#         appName: 'practice-app1'
+#         deployToSlotOrASE: true
+#         resourceGroupName: 'Practice'
+#         slotName: 'testing-env'
+#         #package: '$(Pipeline.Workspace)/drop/target/*.jar'
+#         package: '$(Pipeline.Workspace)/**/*.jar'
+#         deploymentMethod: 'auto'
 
 
  
