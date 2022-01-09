@@ -4,7 +4,8 @@ trigger:
 - master
 
 variables:
-  pomDir: 'Backend/project-gladiator/gladiator'
+  pomDir: 'AirLines-Project/Backend/project-gladiator/gladiator'
+  terraformDir: 'AirLines-Project/AirLine-Infra'
 
 pool:
   vmImage: ubuntu-latest
@@ -12,10 +13,21 @@ pool:
 stages:
 - stage: build
   jobs:
+    - job: create_resources
+      displayName: 'create aks cluster'
+      steps:
+      - task: TerraformTaskV2@2
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          workingDirectory: 'AirLines-Project/AirLine-Infra'
+          backendServiceArm: 'Free Trial-Airline-Project (94a17abb-3b06-4775-b208-c36b78db5987)'
+          backendAzureRmResourceGroupName: 'SA-rsg'
+          backendAzureRmStorageAccountName: 'tffilessa'
+          backendAzureRmContainerName: 'terraform'
+          backendAzureRmKey: 'terraform/terraform.tfstate'
     - job: build
       steps:
-      
-
       - script: mvn package
         displayName: 'mvn package'
         workingDirectory: $(pomDir)
