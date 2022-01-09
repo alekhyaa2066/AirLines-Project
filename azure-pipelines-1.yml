@@ -30,6 +30,20 @@ stages:
           artifact: 'drop'
           publishLocation: 'pipeline'
 
+- stage: Manual_Approval
+  pool: server
+  jobs:
+  - job: 'Approve_for_NextStage'
+    displayName: 'Validate to approve for NextStage'
+    timeoutInMinutes: 4320
+    steps:
+    - task: ManualValidation@0
+      timeoutInMinutes: 4320
+      inputs:
+        notifyUsers: 'Alekhya.Thadagonda@lntinfotech.com'
+        instructions: 'Validate for next stage'
+        onTimeout: reject
+
 - stage: deploy_to_test_env
   jobs:
   - job: 'deployToAppservice'
@@ -51,4 +65,6 @@ stages:
         #package: '$(Pipeline.Workspace)/drop/target/*.jar'
         package: '$(Pipeline.Workspace)/**/*.jar'
         deploymentMethod: 'auto'
+
+
  
