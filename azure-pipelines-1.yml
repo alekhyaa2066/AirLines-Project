@@ -14,11 +14,7 @@ stages:
   jobs:
     - job: build
       steps:
-      # - script: pwd
-      #   displayName: 'check dir'
-
-      # - script: ls -la
-      #   displayName: 'check files'
+      
 
       - script: mvn package
         displayName: 'mvn package'
@@ -44,5 +40,14 @@ stages:
         buildType: 'current'
         artifactName: 'drop'
         targetPath: '$(Pipeline.Workspace)/drop'
-
+    - task: AzureWebApp@1
+      inputs:
+        azureSubscription: 'Free Trial-Airline-Project (94a17abb-3b06-4775-b208-c36b78db5987)'
+        appType: 'webApp'
+        appName: 'practice-app1'
+        deployToSlotOrASE: true
+        resourceGroupName: 'Practice'
+        slotName: 'testing-env'
+        package: '$(Pipeline.Workspace)/drop/*.zip'
+        deploymentMethod: 'auto'
  
